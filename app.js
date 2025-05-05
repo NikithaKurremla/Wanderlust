@@ -54,7 +54,13 @@ app.get("/listings/:id", async (req, res) => {
 
 //Create Route
 app.post("/listings", async (req, res) => {
-  const newListing = new Listing(req.body.listing);
+  const listingData = new Listing(req.body.listing);
+  listingData.image = {
+    filename: "listingimage",
+    url: listingData.imageUrl
+  };
+  delete listingData.imageUrl;
+  const newListing = new Listing(listingData);
   await newListing.save();
   res.redirect("/listings");
 });

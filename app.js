@@ -7,7 +7,7 @@ const methodOverride = require("method-override");
 const ejsMate=require("ejs-mate");
 const wrapAsync=require("./utils/wrapAsync.js");
 const ExpressError =require("./utils/ExpressError.js")
-
+const {listingSchema}=require("./schema.js");
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
 main()
@@ -79,6 +79,7 @@ app.post("/listings", wrapAsync(async (req, res,next) => {
     // if (!title || !description || !price || !location || !country || !image) {
     //   return next(new ExpressError(400, "Page Not Found!"));
     // }
+    // const newListing= new Listing(req.body.listing);
 
     const newListing = new Listing({
       title,
@@ -91,6 +92,16 @@ app.post("/listings", wrapAsync(async (req, res,next) => {
         filename: image.filename ||"listingimage", // Default filename (optional)
       }
     });
+     if(!newListing.title){
+      throw new ExpressError(400,"Title is missing");
+     }
+     if(!newListing.description){
+      throw new ExpressError(400,"Description is missing");
+     }
+     if(!newListing.location){
+      throw new ExpressError(400,"Location is missing");
+     }
+    
     
     await newListing.save();
     res.redirect("/listings"); // Or wherever you want to redirect
@@ -145,7 +156,8 @@ app.use((req,res,next)=>{
 
 app.use((err,req,res,next)=>{
   let {statusCode=500,message="Something went wrong"}=err;
-  res.status(statusCode).send(message);
+  res.status(statusCode).render("error.ejs",{message});
+  // res.status(statusCode).send(message);
 });
 
 

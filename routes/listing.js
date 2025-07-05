@@ -10,34 +10,38 @@ const {isLoggedIn,isOwner,validateListing}=require("../middleware.js");
 // controllers
 const listingController=require("../controllers/listings.js");
 
-
-//Index Route
-router.get(
-  "/",  
-  wrapAsync(listingController.index)
-);
-
-//New Route
+//index and create are under same Route("/")
+router
+    .route("/")
+    .get(wrapAsync(listingController.index))
+    .post(
+      isLoggedIn, 
+      validateListing,  
+      wrapAsync(listingController.createListing)
+    );
+    //New Route
 router.get(
   "/new",
   isLoggedIn,
   listingController.renderNewForm
 );
 
-//Show Route
-router.get(
-  "/:id", 
-  wrapAsync( listingController.showListing)
-);
+    //show,Updata,Delete
+router
+.route("/:id")
+.get(wrapAsync( listingController.showListing))
+.put(
+  isLoggedIn,
+   isOwner,
+   validateListing,
+   wrapAsync(listingController.updateListing)
+  )
+  .delete(
+  isLoggedIn,
+  isOwner,
+   wrapAsync( listingController.destroyListing)
+  )
 
-//create
-// New and working
-router.post(
-  "/",
-  isLoggedIn, 
-  validateListing,  
-  wrapAsync(listingController.createListing)
-);
 
 //Edit Route
 router.get(
@@ -47,22 +51,45 @@ router.get(
   wrapAsync(listingController.renderEditForm)
 );
 
-//Update Route
-router.put(
-  "/:id",
-   isLoggedIn,
-   isOwner,
-   validateListing,
-   wrapAsync(listingController.updateListing)
-  );
 
-//Delete Route
-router.delete(
-  "/:id",
-  isLoggedIn,
-  isOwner,
-   wrapAsync( listingController.destroyListing)
-  );
+
+// //Index Route
+//   router .get("/",wrapAsync(listingController.index));
+
+
+//Show Route
+// router.get(
+//   "/:id", 
+//   wrapAsync( listingController.showListing)
+// );
+
+//create
+// New and working
+// router.post(
+//   "/",
+//   isLoggedIn, 
+//   validateListing,  
+//   wrapAsync(listingController.createListing)
+// );
+
+
+
+// //Update Route
+// router.put(
+//   "/:id",
+//    isLoggedIn,
+//    isOwner,
+//    validateListing,
+//    wrapAsync(listingController.updateListing)
+//   );
+
+// //Delete Route
+// router.delete(
+//   "/:id",
+//   isLoggedIn,
+//   isOwner,
+//    wrapAsync( listingController.destroyListing)
+//   );
 
 
 module.exports = router;

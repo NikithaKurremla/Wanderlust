@@ -42,7 +42,7 @@ module.exports.login=async(req,res)=>{
         res.redirect(redirectUrl);
 };
 
-(req,res,next)=>{
+module.exports.logout=(req,res,next)=>{
     req.logout((err)=>{
         if(err){
             return next(err);
@@ -50,4 +50,4 @@ module.exports.login=async(req,res)=>{
         req.flash("success","you are logged out!");
         res.redirect("/listings");
     })
-}
+};

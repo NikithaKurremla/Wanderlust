@@ -8,11 +8,14 @@ module.exports.listingSchema=Joi.object({
         country:Joi.string().required(),
         price:Joi.number().required().min(0),
         // image:Joi.string().allow("",null)
+        // image: Joi.object({
+        // url: Joi.string().required(),
+        // filename: Joi.string().required()
+        // }).required()
         image: Joi.object({
-        url: Joi.string().required(),
-        filename: Joi.string().required()
-        }).required()
-        
+        url: Joi.string().allow('', null),
+         filename: Joi.string().allow('', null)
+        }).optional(),
 
     }).required()
 });

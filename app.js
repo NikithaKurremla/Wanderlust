@@ -26,7 +26,7 @@ const userRouter =require("./routes/user.js");
 
 // const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 // const dbUrl=process.env.ATLASDB_URL ;
-const dbUrl=process.env.ATLASDB_URL ||" mongodb://127.0.0.1:27017/wanderlust";
+const dbUrl=process.env.ATLASDB_URL ||"mongodb://127.0.0.1:27017/wanderlust";
 
  
 
@@ -49,6 +49,8 @@ app.use(methodOverride("_method"));
 app.engine("ejs",ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
 
+app.set("trust proxy", 1);
+
 const store=MongoStore.create({
   mongoUrl:dbUrl,
   crypto:{
@@ -61,18 +63,31 @@ store.on("error",(err)=>{
   console.log("ERROR in MONGO SESSION STORE",err);
 });
 
-const sessionOptions={
+// const sessionOptions={
+//   store,
+//   secret: process.env.SECRET,
+//     resave:false,
+//     saveUninitialized:true,
+//     // for expires the cookies
+//     cookie:{
+//       expires:Date.now()+7 * 24 * 60 * 60 * 1000,
+//       maxAge:7 * 24 * 60 * 60 * 1000,
+//       httpOnly:true,
+//       secure: process.env.NODE_ENV === "production",
+//     },
+// };
+
+const sessionOptions = {
   store,
   secret: process.env.SECRET,
-    resave:false,
-    saveUninitialized:true,
-    // for expires the cookies
-    cookie:{
-      expires:Date.now()+7 * 24 * 60 * 60 * 1000,
-      maxAge:7 * 24 * 60 * 60 * 1000,
-      httpOnly:true,
-      secure: process.env.NODE_ENV === "production",
-    },
+  resave: false,
+  saveUninitialized: false, 
+  cookie: {
+    expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    secure: false, 
+  },
 };
 // app.get("/", (req, res) => {
 //   res.send("Hi, I am root");

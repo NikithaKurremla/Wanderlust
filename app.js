@@ -25,7 +25,7 @@ const reviewsRouter =require("./routes/reviews.js");
 const userRouter =require("./routes/user.js");
 
 // const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
-const dbUrl=process.env.ATLASDB_URL;
+const dbUrl=process.env.ATLASDB_URL ||  "mongodb://127.0.0.1:27017/wanderlust";
 
  
 
@@ -70,6 +70,7 @@ const sessionOptions={
       expires:Date.now()+7 * 24 * 60 * 60 * 1000,
       maxAge:7 * 24 * 60 * 60 * 1000,
       httpOnly:true,
+      secure: process.env.NODE_ENV === "production",
     },
 };
 // app.get("/", (req, res) => {
@@ -92,7 +93,7 @@ passport.deserializeUser(User.deserializeUser());
 app.use((req,res,next)=>{
   res.locals.success= req.flash("success");
    res.locals.error= req.flash("error");
-   res.locals.currUser=req.user;
+   res.locals.currUser=req.user || null;
   // console.log(res.locals.success);
   next();
 });
@@ -145,7 +146,7 @@ app.use((err,req,res,next)=>{
 });
 
 
-
-app.listen(8080, () => {
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
   console.log("server is listening to port 8080");
 })

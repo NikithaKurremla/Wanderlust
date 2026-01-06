@@ -152,7 +152,8 @@ app.use("/",userRouter);
 //   next( new ExpressError(404,"Page Not Found!"));
 // });
 app.use((req,res,next)=>{
-  next(new ExpressError(404,"Page Not Found!"));
+  // next(new ExpressError(404,"Welcome"));
+  res.render("Home.ejs");
 })
 
 app.use((err,req,res,next)=>{

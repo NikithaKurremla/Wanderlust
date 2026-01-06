@@ -53,36 +53,71 @@ module.exports.renderEditForm=async (req, res) => {
     req.flash("error","Listing you requested for does not exist ");
     return res.redirect("/listings");
   }
-  let originalImageUrl=listing.image.url;
-  originalImageUrl=originalImageUrl.replace("/upload","/upload/h_300,w_250");
+  let originalImageUrl = "";
+  if (listing.image && listing.image.url) {
+    originalImageUrl = listing.image.url.replace("/upload", "/upload/h_300,w_250");
+  }
+
+  // let originalImageUrl=listing.image.url;
+  // originalImageUrl=originalImageUrl.replace("/upload","/upload/h_300,w_250");
   res.render("listings/edit.ejs", { listing, originalImageUrl});
 };
 
-//Update Route
-module.exports.updateListing=async (req, res) => {
-    let { id } = req.params; 
-  // if(!req.body.listing){
-  //   throw new ExpressError(400,"Send Valid data for listing");
-  //  }
-  let listing= await Listing.findByIdAndUpdate(id, { ...req.body.listing });
 
-
-  if(typeof req.file !== "undefined"){
-    let url=req.file.path;
-    let filename=req.file.filename;
-    listing.image={url,filename};
-    await listing.save();
+module.exports.updateListing = async (req, res) => {
+  const { id } = req.params;
+  const listing = await Listing.findById(id);
+  if (!listing) {
+    req.flash("error", "Listing not found!");
+    return res.redirect("/listings");
   }
-  // if (req.file) {
-  //   listing.image = {
-  //     url: req.file.path,
-  //     filename: req.file.filename
-  //   };
-  // }
-  // await listing.save();
-   req.flash("success","Listing Updated! ");
-  res.redirect(`/listings/${id}`);
+
+  // Update text fields
+  listing.title = req.body.listing.title;
+  listing.description = req.body.listing.description;
+  listing.price = req.body.listing.price;
+  listing.location = req.body.listing.location;
+  listing.country = req.body.listing.country;
+
+  // Update image only if a new one is uploaded
+  if (req.file) {
+    listing.image = {
+      url: req.file.path,
+      filename: req.file.filename
+    };
+  }
+
+  await listing.save();
+  req.flash("success", "Listing Updated!");
+  res.redirect(`/listings/${listing._id}`);
 };
+
+// //Update Route
+// module.exports.updateListing=async (req, res) => {
+//     let { id } = req.params; 
+//   // if(!req.body.listing){
+//   //   throw new ExpressError(400,"Send Valid data for listing");
+//   //  }
+
+//   let listing= await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+
+
+//   // if(typeof req.file !== "undefined"){
+//   //   let url=req.file.path;
+//   //   let filename=req.file.filename;
+//   //   listing.image={url,filename};
+//   //   await listing.save();
+//   // }
+//   if (req.file) {
+//     listing.image = {
+//       url: req.file.path,
+//       filename: req.file.filename
+//     };
+//   }
+//   await listing.save();
+//    req.flash("success","Listing Updated! ");
+//   res.redirect(`/listings/${id}`);
+// };
 
 //Delete Route
 module.exports.destroyListing=async (req, res) => {

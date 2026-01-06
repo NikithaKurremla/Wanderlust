@@ -53,16 +53,12 @@
           <% if(!currUser){  %>
           <a class="nav-link "  href="/signup"><b>Sign Up</b></a>
           <a class="nav-link" href="/login"><b>Log in</b></a>
-          <% } %>
-            <% if(currUser){  %>
+          <!-- <% } %>
+            <% if(currUser){  %> -->
+               <% } else { %>
           <a class="nav-link" href="/logout"><b>Log out</b></a>
           <% } %>
-            <!-- <% if(currUser){ %>
-                <a class="nav-link" href="/logout"><b>Log out</b></a>
-              <% } else { %>
-                <a class="nav-link" href="/signup"><b>Sign Up</b></a>
-                <a class="nav-link" href="/login"><b>Log in</b></a>
-            <% } %> -->
+            
                       
         </div>
 
